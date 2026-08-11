@@ -1,0 +1,1 @@
+docs: add commercial-use and licensing guidance to README 
