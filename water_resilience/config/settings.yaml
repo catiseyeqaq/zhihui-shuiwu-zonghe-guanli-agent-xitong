@@ -1,0 +1,54 @@
+# 智慧水务综合管理 Agent：公开版示例配置
+# 所有默认输入均为合成数据，仅用于功能演示与方法验证。
+
+project:
+  name: 智慧水务综合管理Agent系统
+  case: generic_water_network_demo
+  disclaimer: 默认拓扑、时序、维修和管理记录均为合成数据，不代表任何真实水务系统。
+
+random_seed: 42
+
+# 公开示例使用匿名分区名，部署时可由用户替换。
+towns:
+  - 分区A
+  - 分区B
+  - 分区C
+  - 分区D
+
+quarters:
+  - 2025Q1
+  - 2025Q2
+  - 2025Q3
+  - 2025Q4
+
+llm:
+  enabled: false
+  endpoint: http://localhost:8030/v1
+  model: local-water-risk-model
+  timeout: 120
+
+topology:
+  n_water_plants: 8
+  n_rural_works: 0
+  n_reservoirs: 4
+  junctions_per_town: 6
+  valves_per_town: 2
+  monitors_per_town: 2
+  demand_nodes_per_town: 4
+  materials: [ductile_iron, steel, pe, pvc, cast_iron]
+  material_risk: {ductile_iron: 0.15, steel: 0.25, pe: 0.30, pvc: 0.45, cast_iron: 0.70}
+  elevation_range_m: [100, 600]
+
+timeseries:
+  freq_hours: 1
+  years: 1
+  indicators: [pressure, flow, chlorine]
+  pressure_base_mpa: 0.30
+  anomaly_rate: 0.02
+
+paths:
+  raw_docs: ""
+  kg_draft: water_resilience/config/llm_context.example.txt
+  generated: water_resilience/data/generated
+  extracted: water_resilience/data/extracted
+  outputs: water_resilience/outputs

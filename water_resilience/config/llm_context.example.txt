@@ -1,0 +1,3 @@
+# Optional public demo context
+# Replace this file locally with an authorized, non-sensitive water-operations
+# document before enabling --use-llm. Do not commit private source documents.

@@ -1,0 +1,35 @@
+# 山地乡村供水管网运维韧性 - 四维指标体系(14 项)
+# dimension: resist(抵御)/absorb(吸收)/recover(恢复)/adapt(适应)
+# direction: positive(值越大韧性越好) / negative(值越大韧性越差)
+# source:    topology / timeseries / gnn / lstm / maintenance / management
+# enabled:   可选，默认 true；置 false 则该指标不参与熵权-TOPSIS（调整指标集只改此文件）
+# 每项指标标准化后进入熵权-TOPSIS; direction 用于 TOPSIS 正负理想解方向。
+
+dimensions:
+  resist:  {name: 抵御能力, weight_hint: 0.25}
+  absorb:  {name: 吸收能力, weight_hint: 0.25}
+  recover: {name: 恢复能力, weight_hint: 0.25}
+  adapt:   {name: 适应能力, weight_hint: 0.25}
+
+indicators:
+  # ---- 抵御能力 resist ----
+  - {id: pipe_material_reliability, name: 管材可靠性,       dimension: resist,  direction: positive, source: topology,    desc: 分区内管段材质可靠性(材质风险取反的加权均值)}
+  - {id: pipe_age_health,           name: 管龄健康度,       dimension: resist,  direction: positive, source: topology,    desc: 分区内管段管龄健康度(越新越好)}
+  - {id: pressure_stability,        name: 压力波动稳定性,   dimension: resist,  direction: positive, source: timeseries,  desc: 分区内压力标准差取反(波动越小越稳)}
+  - {id: gnn_spatial_risk,          name: GNN空间风险评分,  dimension: resist,  direction: negative, source: gnn,         desc: GNN 识别的分区高风险节点占比/平均风险}
+
+  # ---- 吸收能力 absorb ----
+  - {id: network_connectivity,      name: 管网连通性,       dimension: absorb,  direction: positive, source: topology,    desc: 分区子图平均度/代数连通度}
+  - {id: supply_redundancy,         name: 供水冗余,         dimension: absorb,  direction: positive, source: topology,    desc: 分区内存在冗余供水路径的节点比例}
+  - {id: valve_isolation,           name: 阀门隔离能力,     dimension: absorb,  direction: positive, source: topology,    desc: 分区内阀门密度(单位节点阀门数)}
+  - {id: lstm_dynamic_anomaly,      name: LSTM动态异常程度, dimension: absorb,  direction: negative, source: lstm,        desc: LSTM 预测得到的分区压力异常度(越大越差)}
+
+  # ---- 恢复能力 recover ----
+  - {id: fault_discovery_time,      name: 故障发现时间,     dimension: recover, direction: negative, source: maintenance, desc: 分区季度平均故障发现时长(小时)}
+  - {id: avg_repair_time,           name: 平均抢修时间,     dimension: recover, direction: negative, source: maintenance, desc: 分区季度平均抢修时长(小时)}
+  - {id: supply_recovery_time,      name: 供水恢复时间,     dimension: recover, direction: negative, source: maintenance, desc: 分区季度平均供水恢复时长(小时)}
+
+  # ---- 适应能力 adapt ----
+  - {id: repeat_fault_improvement,  name: 重复故障改善,     dimension: adapt,   direction: positive, source: maintenance, desc: 相比上一季度重复故障率的下降幅度}
+  - {id: inspection_completeness,   name: 巡检制度完善度,   dimension: adapt,   direction: positive, source: management,  desc: 巡检制度完善程度(专家评分 0-1)}
+  - {id: training_knowledge_update, name: 人员培训与知识更新, dimension: adapt, direction: positive, source: management,  desc: 人员培训与知识更新水平(专家评分 0-1)}

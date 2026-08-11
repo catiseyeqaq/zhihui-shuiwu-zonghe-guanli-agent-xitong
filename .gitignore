@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+
+# Generated synthetic data and reports
+water_resilience/data/generated/*
+!water_resilience/data/generated/.gitkeep
+water_resilience/data/extracted/*
+!water_resilience/data/extracted/.gitkeep
+water_resilience/outputs/*
+!water_resilience/outputs/.gitkeep
+
+# Local databases, uploads, logs, and model artifacts
+*.db
+*.sqlite
+*.sqlite3
+*.log
+uploads/
+backups/
+checkpoints/
+weights/
+artifacts/models/
