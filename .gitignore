@@ -23,6 +23,9 @@ water_resilience/data/extracted/*
 water_resilience/outputs/*
 !water_resilience/outputs/.gitkeep
 
+# Real data (deployment-side only, never commit)
+water_resilience/data/real/*
+
 # Local databases, uploads, logs, and model artifacts
 *.db
 *.sqlite

@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 """LSTM 单指标(压力)短期预测 + 动态异常度(供吸收能力指标使用)。
 
-采用两层 LSTM 与 Dropout。每个分区在日尺度压力序列上训练模型预测下一日，
-计算 MAE/RMSE，并用预测残差聚合为分区×季度的动态异常度。默认使用 CPU 训练。
+复用 rnn_llm_system 的 LSTM 设计思路(2 层 LSTM + Dropout)。每个乡镇在日尺度压力序列上
+训练 LSTM 预测下一日, 计算 MAE/RMSE; 并用预测残差聚合为 乡镇×季度 的动态异常度。CPU 训练。
 """
 
 import json

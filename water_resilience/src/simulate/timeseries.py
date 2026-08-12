@@ -56,8 +56,10 @@ def default_path():
 
 if __name__ == "__main__":
     C.set_seed(C.SEED)
-    df = simulate()
+    from data_sources import csv_or_simulate
+    df, is_real = csv_or_simulate("timeseries.csv", simulate)
     df.to_csv(default_path(), index=False)
+    src = "REAL" if is_real else "SIMULATED"
     anom = int(df["is_anomaly"].sum()) if "is_anomaly" in df.columns else 0
-    print(f"[timeseries] rows={len(df)} towns={df['town'].nunique()} anomalies={anom} source=SIMULATED")
+    print(f"[timeseries] rows={len(df)} towns={df['town'].nunique()} anomalies={anom} source={src}")
     print("[timeseries] saved ->", default_path())

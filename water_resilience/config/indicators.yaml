@@ -2,7 +2,7 @@
 # dimension: resist(抵御)/absorb(吸收)/recover(恢复)/adapt(适应)
 # direction: positive(值越大韧性越好) / negative(值越大韧性越差)
 # source:    topology / timeseries / gnn / lstm / maintenance / management
-# enabled:   可选，默认 true；置 false 则该指标不参与熵权-TOPSIS（调整指标集只改此文件）
+# enabled:   可选, 默认 true; 置 false 则该指标不参与熵权-TOPSIS(换水司裁剪指标集只改此文件)
 # 每项指标标准化后进入熵权-TOPSIS; direction 用于 TOPSIS 正负理想解方向。
 
 dimensions:

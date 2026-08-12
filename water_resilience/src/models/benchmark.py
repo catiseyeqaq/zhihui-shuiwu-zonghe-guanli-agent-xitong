@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""训练、评估与基线对比的一键脚本。
+"""申报书对齐的"训练 + 评估 + 基线对比"一键脚本(对应申报书第 9–13 月交付)。
 
 GNN 空间风险识别(三级分类): GraphSAGE(主) vs GCN(对比) vs 图中心性(基线) vs RandomForest(非图基线)
   → 指标: Accuracy / Macro-F1。
@@ -8,8 +8,9 @@ LSTM 单指标(压力)时序预测: LSTM vs 持续性(Persistence) vs 移动平�
   → 指标: MAE / RMSE(各乡镇均值)。
 输出: 终端对比表 + water_resilience/outputs/benchmark_report.md + benchmark_metrics.csv。
 
-说明: 复用已有训练/基线模块(gnn_train / baselines_graph / lstm_forecaster / baselines_ts)，
-本脚本只做统一编排与对比表汇总。数据为规则+仿真(SIMULATED)，仅用于方法演示。
+说明: 复用已有训练/基线模块(gnn_train / baselines_graph / lstm_forecaster / baselines_ts),
+本脚本只做统一编排与对比表汇总。数据为规则+仿真(SIMULATED), 仅方法验证; 接入真实数据后
+(见 data_sources 的 real/ 目录约定)同脚本即可复现真实评价, 无需改动。
 
 用法: PYTHONPATH=water_resilience/src python3 water_resilience/src/models/benchmark.py
 """
@@ -83,7 +84,7 @@ def run_benchmark(seed=None):
 
 def _print_and_save(gnn_rows, ts_rows, seed):
     lines = [
-        "# 供水管网韧性 - 模型评估与基线对比",
+        "# 供水管网韧性 - 模型评估与基线对比(申报书第 9–13 月)",
         f"> 随机种子={seed}; 数据为规则+仿真(SIMULATED), 仅方法验证。",
         "",
         "## 1. GNN 空间风险识别(三级分类)",

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""端到端编排：依次运行拓扑、标注、仿真、GNN、LSTM、抽取、指标、熵权 TOPSIS 和成果导出。
+"""端到端编排: 依次运行 拓扑->标注->仿真->GNN->LSTM->抽取->指标->熵权TOPSIS->成果导出。
 
 每步作为子进程运行各模块(与单独运行行为一致)。默认离线(种子风险关系); --use-llm 启用 Qwen 抽取。
 用法: python water_resilience/src/pipeline.py [--use-llm]
@@ -38,8 +38,8 @@ def main():
 
     env = dict(os.environ, PYTHONPATH=SRC, PYTHONUNBUFFERED="1")
     print("=" * 64)
-    print("智慧水务综合管理 Agent - 端到端流水线")
-    print("数据说明：拓扑、时序、维修和管理记录均为仿真数据，仅用于功能演示")
+    print("山地供水管网运维阶段韧性智能评价（合成示例） - 端到端流水线")
+    print("数据说明: 拓扑/时序/维修为仿真(SIMULATED), 仅用于方法验证")
     print("=" * 64)
     t0 = time.time()
     for name, rel in STEPS:

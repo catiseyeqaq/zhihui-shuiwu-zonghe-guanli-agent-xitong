@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""物理管网拓扑生成器。
+"""物理管网拓扑生成器(SIMULATED)。
 
-根据公开配置中的抽象规模和参数，规则化生成供水管网物理图：
-节点包括水源、水厂、清水池、交汇点、阀门、监测点和需求点，
-边包括管径、管长、材质、管龄和维修次数等演示属性。
-拓扑、坐标和高程均由固定随机种子生成，仅用于方法演示。
+依据工程文档设施规模(示例规模 / 5 乡镇)与山地地理特征,
+规则化生成供水管网物理图: 节点=水源/水厂/清水池/交汇点/阀门/监测点/需求点,
+边=供水管段(管径/管长/材质/管龄/历史维修次数)。拓扑与坐标/高程均为仿真, 仅用于方法验证。
 """
 
 import json
@@ -169,10 +168,14 @@ def default_path():
 
 if __name__ == "__main__":
     C.set_seed(C.SEED)
-    G = build_topology()
+    from data_sources import topology_or_build
+    G, is_real = topology_or_build("topology.json", build_topology)
+    if is_real:
+        _annotate(G)  # 真实拓扑补齐度/中心性/管段聚合等派生节点属性(供 GNN 特征)
     save_topology(G, default_path())
     from collections import Counter
     types = Counter(nx.get_node_attributes(G, "node_type").values())
-    print(f"[topology] nodes={G.number_of_nodes()} edges={G.number_of_edges()} source=SIMULATED")
+    src = "REAL" if is_real else "SIMULATED"
+    print(f"[topology] nodes={G.number_of_nodes()} edges={G.number_of_edges()} source={src}")
     print("[topology] types:", dict(types))
     print("[topology] saved ->", default_path())

@@ -15,7 +15,7 @@ import numpy as np
 import wr_config as C
 from graph.topology_builder import load_topology, save_topology, default_path
 
-# 多因子权重（用于保持风险评分的可解释性）
+# 多因子权重(可在论文中作为可解释的风险公式)
 WEIGHTS = {"elevation": 0.20, "age": 0.25, "mrisk": 0.20, "betweenness": 0.15, "repair": 0.20}
 
 

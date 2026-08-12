@@ -57,9 +57,18 @@ def simulate(settings=None):
 
 if __name__ == "__main__":
     C.set_seed(C.SEED)
+    from data_sources import real_path
+    import pandas as pd
     gen = C.PATHS["generated"]
-    ev, agg = simulate()
-    ev.to_csv(os.path.join(gen, "maintenance_events.csv"), index=False)
-    agg.to_csv(os.path.join(gen, "maintenance_quarterly.csv"), index=False)
-    print(f"[maintenance] events={len(ev)} town-quarter rows={len(agg)} source=SIMULATED")
+    rq = real_path("maintenance_quarterly.csv")
+    if rq:
+        agg = pd.read_csv(rq)
+        agg["SIMULATED"] = 0
+        agg.to_csv(os.path.join(gen, "maintenance_quarterly.csv"), index=False)
+        print(f"[maintenance] quarterly rows={len(agg)} source=REAL")
+    else:
+        ev, agg = simulate()
+        ev.to_csv(os.path.join(gen, "maintenance_events.csv"), index=False)
+        agg.to_csv(os.path.join(gen, "maintenance_quarterly.csv"), index=False)
+        print(f"[maintenance] events={len(ev)} town-quarter rows={len(agg)} source=SIMULATED")
     print("[maintenance] saved maintenance_quarterly.csv")

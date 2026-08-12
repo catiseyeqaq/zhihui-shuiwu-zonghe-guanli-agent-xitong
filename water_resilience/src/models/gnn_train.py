@@ -6,7 +6,6 @@
 输出各模型 accuracy/macro-F1 与主模型(GraphSAGE)逐节点预测风险, 供指标聚合使用。
 """
 
-import csv
 import json
 import os
 
@@ -97,7 +96,6 @@ def run_gnn(seed=42):
     node_pred = {}
     for i, n in enumerate(nodes):
         node_pred[n] = {
-            "name": G.nodes[n].get("name", n),
             "town": G.nodes[n]["town"], "node_type": G.nodes[n]["node_type"],
             "true_label": int(y[i]), "pred_label": int(sage_pred[i]),
             "risk_prob_high": round(float(sage_prob[i, 2]), 4),
@@ -112,20 +110,6 @@ if __name__ == "__main__":
     out = os.path.join(C.PATHS["outputs"], "gnn_results.json")
     with open(out, "w", encoding="utf-8") as f:
         json.dump(res, f, ensure_ascii=False, indent=2)
-    high_risk_path = os.path.join(C.PATHS["outputs"], "high_risk_nodes.csv")
-    high_risk = sorted(
-        ((node_id, row) for node_id, row in res["node_pred"].items() if row["pred_label"] == 2),
-        key=lambda item: item[1]["risk_prob_high"],
-        reverse=True,
-    )
-    with open(high_risk_path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.writer(f)
-        writer.writerow(["node_id", "name", "town", "node_type", "pred_label", "risk_prob_high", "SIMULATED"])
-        for node_id, row in high_risk:
-            writer.writerow([
-                node_id, row["name"], row["town"], row["node_type"],
-                row["pred_label"], row["risk_prob_high"], 1,
-            ])
     print("[gnn] GraphSAGE:", res["models"]["GraphSAGE"])
     print("[gnn] GCN      :", res["models"]["GCN"])
-    print("[gnn] saved ->", out, "+", high_risk_path)
+    print("[gnn] saved ->", out)

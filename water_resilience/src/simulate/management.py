@@ -33,7 +33,8 @@ def simulate(settings=None):
 
 if __name__ == "__main__":
     C.set_seed(C.SEED)
-    df = simulate()
+    from data_sources import csv_or_simulate
+    df, is_real = csv_or_simulate("management.csv", simulate)
     df.to_csv(os.path.join(C.PATHS["generated"], "management.csv"), index=False)
-    print(f"[management] rows={len(df)} source=SIMULATED")
+    print(f"[management] rows={len(df)} source={'REAL' if is_real else 'SIMULATED'}")
     print("[management] saved management.csv")

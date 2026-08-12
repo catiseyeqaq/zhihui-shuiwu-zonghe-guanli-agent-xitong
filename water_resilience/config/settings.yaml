@@ -1,54 +1,67 @@
-# 智慧水务综合管理 Agent：公开版示例配置
-# 所有默认输入均为合成数据，仅用于功能演示与方法验证。
+#  山地供水管网运维阶段韧性智能评价（合成示例） - 全局配置
+#  注意: 本项目的管网拓扑/时序/维修记录均为规则+仿真生成(SIMULATED),
+#        仅用于方法验证, 不代表合成示例片区真实数据与真实结论。
 
 project:
-  name: 智慧水务综合管理Agent系统
-  case: generic_water_network_demo
-  disclaimer: 默认拓扑、时序、维修和管理记录均为合成数据，不代表任何真实水务系统。
+  name: 山地供水管网运维阶段韧性智能评价（合成示例）
+  case: 合成示例片区
+  disclaimer: 管网拓扑/时序/维修记录为规则+仿真生成(SIMULATED), 仅用于方法验证, 不作为真实结果。
 
 random_seed: 42
 
-# 公开示例使用匿名分区名，部署时可由用户替换。
+# 供水分区(以 5 个乡镇为空间评价单元)
 towns:
-  - 分区A
-  - 分区B
-  - 分区C
-  - 分区D
+  - 甲镇
+  - 乙镇
+  - 丙镇
+  - 丁镇
+  - 戊镇
 
+# 时间评价周期(2 年共 8 季)
 quarters:
+  - 2024Q1
+  - 2024Q2
+  - 2024Q3
+  - 2024Q4
   - 2025Q1
   - 2025Q2
   - 2025Q3
   - 2025Q4
 
+# 大模型抽取(默认关闭, 使用种子回退; 加 --use-llm 走真实 Qwen)
 llm:
   enabled: false
   endpoint: http://localhost:8030/v1
-  model: local-water-risk-model
-  timeout: 120
+  model: qwen3.6-fast
+  timeout: 180
 
+# 物理管网拓扑生成参数(依据文档: 示例规模)
 topology:
-  n_water_plants: 8
-  n_rural_works: 0
-  n_reservoirs: 4
-  junctions_per_town: 6
-  valves_per_town: 2
-  monitors_per_town: 2
-  demand_nodes_per_town: 4
+  n_water_plants: 13
+  n_rural_works: 27
+  n_reservoirs: 5           # 清水池(每乡镇 1)
+  junctions_per_town: 8     # 每乡镇交汇/管网节点
+  valves_per_town: 3        # 每乡镇阀门
+  monitors_per_town: 2      # 每乡镇压力/流量监测点
+  demand_nodes_per_town: 6  # 每乡镇用水需求节点
   materials: [ductile_iron, steel, pe, pvc, cast_iron]
   material_risk: {ductile_iron: 0.15, steel: 0.25, pe: 0.30, pvc: 0.45, cast_iron: 0.70}
-  elevation_range_m: [100, 600]
+  elevation_range_m: [180, 780]   # 山地高差大
 
+# 时序仿真参数
 timeseries:
   freq_hours: 1
-  years: 1
+  years: 2
   indicators: [pressure, flow, chlorine]
   pressure_base_mpa: 0.30
-  anomaly_rate: 0.02
+  anomaly_rate: 0.02        # 注入异常比例
 
 paths:
-  raw_docs: ""
-  kg_draft: water_resilience/config/llm_context.example.txt
+  raw_docs: data/reference_docs
+  kg_draft: data/reference_docs/供水知识图谱草案.md
   generated: water_resilience/data/generated
   extracted: water_resilience/data/extracted
   outputs: water_resilience/outputs
+  # 真实数据接入目录: 放入同名文件(topology.json/timeseries.csv/maintenance_quarterly.csv/management.csv)
+  # 则数据源模块优先读取真实数据(SIMULATED=0); 缺失时回退规则+仿真(SIMULATED=1)。
+  real: water_resilience/data/real
