@@ -67,12 +67,11 @@ class WaterManagementAgent:
         return {
             "name": "智慧水务综合管理Agent系统",
             "capabilities": [
-                "合成管网拓扑生成与多因子风险标注",
-                "压力、流量、余氯时序仿真",
-                "GraphSAGE/GCN 空间风险识别",
-                "LSTM 压力预测与动态异常度计算",
-                "风险因素—对象—后果—措施关系抽取",
-                "四维韧性指标、熵权-TOPSIS 综合评价与敏感性分析",
+                "合成管网拓扑生成与多因子风险标注（证据化拓扑基础）",
+                "压力、流量、余氯时序仿真与校准（calibrated time-series）",
+                "基线感知预测：以简单基线为参照复检 LSTM 是否超越周季节基线",
+                "风险因素—对象—后果—措施关系抽取（证据约束 LLM，默认关闭）",
+                "四维韧性指标计算与熵权-TOPSIS 敏感性评分（实验性）",
                 "高风险节点查询、报告导出和建议性维修清单",
             ],
             "data_boundary": "默认输入均为合成数据；输出仅用于功能演示和方法验证。",
@@ -95,7 +94,7 @@ class WaterManagementAgent:
         return self._read_csv(self.extracted / "risk_relations.csv", limit)
 
     def get_model_metrics(self) -> dict[str, Any]:
-        """读取 GNN、LSTM 和综合评价权重结果。"""
+        """读取实验性 GNN/LSTM 与综合评价权重结果（仅方法验证，非正式结论）。"""
 
         return {
             "gnn": self._read_json(self.outputs / "gnn_results.json"),

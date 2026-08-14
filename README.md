@@ -1,6 +1,8 @@
 # 智慧水务综合管理Agent系统
 
-一个面向供水管网韧性分析的公开示例 Agent。系统把管网拓扑、运行时序、图神经网络、时序预测、风险知识关系和综合评价串成一条可复现的分析流水线，并提供命令行、Python API、HTML 看板和 Open WebUI 适配示例。
+![CI](https://github.com/catiseyeqaq/zhihui-shuiwu-zonghe-guanli-agent-xitong/actions/workflows/ci.yml/badge.svg)
+
+一个面向供水管网韧性分析的公开示例 Agent。系统把管网拓扑、运行时序、风险关系、证据约束分析与可视化串成一条可复现的分析流水线，并提供命令行、Python API、HTML 看板和 Open WebUI 适配示例。
 
 > GitHub 仓库的 URL 使用 ASCII slug：`zhihui-shuiwu-zonghe-guanli-agent-xitong`；中文项目名保留在本 README、配置和页面标题中。
 
@@ -8,27 +10,35 @@
 
 ```mermaid
 flowchart LR
-    A[合成管网拓扑] --> B[多因子风险标注]
-    B --> C[GraphSAGE / GCN]
-    D[压力/流量/余氯时序仿真] --> E[LSTM 压力预测]
-    F[维修与管理记录仿真] --> G[四维韧性指标]
-    C --> G
-    E --> G
-    B --> H[风险关系抽取]
-    G --> I[熵权 TOPSIS]
-    I --> J[报告 / HTML 看板 / 建议清单]
-    H --> J
+    A[证据化管网拓扑] --> B[校准时序仿真]
+    B --> C[基线感知预测]
+    C --> D[证据约束 LLM：关系抽取 / 评价]
+    D --> E[报告 / HTML 看板 / 建议清单]
+
+    G[GraphSAGE / GCN 空间风险探测] -. 实验性 .-> E
+    L[LSTM 压力预测] -. 实验性 .-> E
+    T[熵权-TOPSIS 综合评价] -. 实验性 .-> E
 ```
 
 主要能力：
 
-- 生成可控随机种子的抽象供水管网拓扑，计算节点和管段风险特征。
-- 对压力、流量、余氯、维修和管理记录进行合成仿真。
-- 使用 GraphSAGE/GCN 进行空间风险识别，使用 LSTM 进行压力预测和动态异常度计算。
-- 构建“风险因素—影响对象—风险后果—处置措施”关系，并保留关系来源与人工核验状态。
-- 根据抵御、吸收、恢复、适应四个维度计算指标矩阵，使用熵权-TOPSIS 输出分区和周期评价。
+- 生成可控随机种子的抽象供水管网拓扑，计算节点和管段风险特征（证据化拓扑基础）。
+- 对压力、流量、余氯、维修和管理记录进行合成仿真与校准（calibrated time-series）。
+- **基线感知预测**：以持续 / MA / AR 等简单基线为参照，通过 部署门复检 LSTM 是否已超越周季节基线；当前 统一预测协议下 LSTM 未超越 WeeklySN 基线，故不作为正式预测主链。
+- 构建“风险因素—影响对象—风险后果—处置措施”关系，并保留关系来源与人工核验状态（证据约束 LLM 抽取，默认关闭）。
+- 根据抵御、吸收、恢复、适应四个维度计算指标矩阵；熵权-TOPSIS 作为敏感性感知的评分参考，但其当前证据不足以支撑正式分区结论。
 - 查询高风险节点、模型指标、拓扑摘要和建议性维修清单。
 - 真实数据接入与校准（可选）：公开基准管网（肯塔基 ky10 等 EPANET .inp）ETL、部署侧监测数据接入与仿真校准、LSTM 部署门槛复核。真实数据仅存放于部署侧（`data/real/` 已被 .gitignore 排除），不随仓库分发。
+
+### 模块定位：Exploratory / Demonstration
+
+仓库保留 GraphSAGE/GCN、LSTM、熵权-TOPSIS 的完整代码（`water_resilience/src/models/gnn_train.py`、`models/lstm_forecaster.py`、`evaluation/entropy_topsis.py`），用于方法验证与后续研究；它们**不**对外声称产出为正式工程结论。
+
+| 模块 | 当前定位 | 实验性模块结论 |
+| --- | --- | --- |
+| GraphSAGE / GCN 空间风险识别 | 实验性 / 演示 | 当前证据不足以支撑正式空间风险结论 |
+| LSTM 压力预测 | 实验性 / 演示 | 统一预测协议下未超越 WeeklySN 周季节基线（MAE 约为基线 5–10 倍），不进入正式主链 |
+| 熵权-TOPSIS 综合评价 | 实验性 / 演示 | 权重敏感性已分析，但作为正式分区 / 周期结论的证据仍不足 |
 
 ## 数据与安全边界
 
@@ -99,7 +109,7 @@ python -m agent "查看综合韧性评分"
 agent/                         # Python Agent API 与命令行入口
 integrations/openwebui/        # Open WebUI 适配示例
 water_resilience/config/       # 合成演示配置与指标体系
-water_resilience/src/          # 拓扑、仿真、GNN、LSTM、评价和报告流水线（含真实数据 ETL/校准与部署门槛复核脚本）
+water_resilience/src/          # 拓扑、仿真、基线感知预测、评价与报告流水线（含 GNN/LSTM/TOPSIS 等实验性模块、真实数据 ETL/校准与 LSTM 部署门槛复核脚本）
 water_resilience/app/          # 本地 HTML 看板服务
 tests/                         # 公开边界和基础结构检查
 ```
