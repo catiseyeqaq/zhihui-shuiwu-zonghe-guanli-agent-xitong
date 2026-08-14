@@ -22,7 +22,10 @@ import datetime
 import json
 import os
 
-EVIDENCE_DIR = os.environ.get("EVIDENCE_ASSET_DIR", "/workdata/discovery_reports_rebuilt_r2_20260810")
+EVIDENCE_DIR = os.environ.get(
+    "EVIDENCE_ASSET_DIR",
+    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "outputs", "evidence_reports"),
+)
 OUT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "outputs")
 OLD_RECEIPT = os.path.join(OUT_DIR, "kg_gnn_lstm_validation.json")
 COVERAGE_TOLERANCE = 0.05

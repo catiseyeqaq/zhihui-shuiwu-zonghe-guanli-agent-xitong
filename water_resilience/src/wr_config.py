@@ -14,7 +14,7 @@ import yaml
 # 目录锚点: .../water_resilience
 _SRC_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_DIR = os.path.dirname(_SRC_DIR)            # water_resilience/
-WORKSPACE_DIR = os.path.dirname(PROJECT_DIR)       # /workdata/GNN+LLM
+WORKSPACE_DIR = os.path.dirname(PROJECT_DIR)       # 上级工作区根目录（部署时通常为项目父目录）
 CONFIG_DIR = os.path.join(PROJECT_DIR, "config")
 
 
