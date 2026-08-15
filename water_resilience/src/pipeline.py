@@ -38,7 +38,7 @@ def main():
 
     env = dict(os.environ, PYTHONPATH=SRC, PYTHONUNBUFFERED="1")
     print("=" * 64)
-    print("山地供水管网运维阶段韧性智能评价（合成示例） - 端到端流水线")
+    print("山地供水管网韧性智能评价（合成示例） - 端到端流水线")
     print("数据说明: 拓扑/时序/维修为仿真(SIMULATED), 仅用于方法验证")
     print("=" * 64)
     t0 = time.time()

@@ -3,17 +3,17 @@
 """LSTM 部署门复检（统一预测协议口径）
 
 依据 configs/model_registry.json 的门禁定义（基线超越 + 区间覆盖率），
-使用 统一 168h 预测的正式聚合指标复检 lstm_forecast 是否可切训练态。
+使用统一 168h 预测的正式聚合指标复检 lstm_forecast 是否可切训练态。
 
-门禁标准（沿用 2026-07-29 回执口径）：
+门禁标准：
   Gate A  lstm_beats_primary_baseline : LSTM town-macro MAE ≤ WeeklySN，全部 horizon
   Gate B  mc_coverage_within_tolerance: MC Dropout PICP 与名义 0.95 偏差 ≤ 0.05
 全部通过 => deployment_gate_passed=true（注册表自动切训练态），否则维持研究态。
 
-说明： 的 LSTM168 为冻结协议下公平训练的 1×LSTM(32)；注册表权重
-kg_gnn_enhanced_lstm（KG/GNN 静态特征增强）未按 统一预测协议重训，不在本次复检范围，
+说明：统一协议的 LSTM168 为冻结协议下公平训练的 1×LSTM(32)；注册表权重
+kg_gnn_enhanced_lstm（KG/GNN 静态特征增强）未按统一预测协议重训，不在本次复检范围，
 其 2026-07-29 旧口径 MC 覆盖率作为遗留记录引用。
-输出: outputs/lstm_deployment_gate_recheck_v1.json（只读 冻结资产，绝不修改）
+输出: outputs/lstm_deployment_gate_recheck_v1.json（只读冻结资产，绝不修改）
 """
 from __future__ import annotations
 
@@ -31,7 +31,7 @@ OLD_RECEIPT = os.path.join(OUT_DIR, "kg_gnn_lstm_validation.json")
 COVERAGE_TOLERANCE = 0.05
 
 
-def load_e3b_aggregate():
+def load_unified_forecast_aggregate():
     path = os.path.join(EVIDENCE_DIR, "unified_forecast_aggregate_metrics_v1.csv")
     rows = []
     with open(path, "r", encoding="utf-8-sig") as f:
@@ -42,7 +42,7 @@ def load_e3b_aggregate():
 
 
 def main() -> int:
-    rows = load_e3b_aggregate()
+    rows = load_unified_forecast_aggregate()
     horizons = sorted({int(r["horizon_h"]) for r in rows})
     per_horizon = {}
     gate_a = True
@@ -60,7 +60,7 @@ def main() -> int:
             "mae_ratio_lstm_over_wsn": round(lstm_mae / wsn_mae, 3),
         }
 
-    # Gate B：遗留 MC Dropout 覆盖率（2026-07-29 旧口径，非 统一预测协议产物）
+    # Gate B：遗留 MC Dropout 覆盖率（2026-07-29 旧口径，非统一预测协议产物）
     gate_b = None
     picp = None
     try:
@@ -87,9 +87,9 @@ def main() -> int:
         "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         "data_provenance": {
             "data_class": "CALIBRATED_SIMULATED_PRESSURE_TIMESERIES_NOT_RAW_SCADA",
-            "e3b_report": os.path.join(EVIDENCE_DIR, "unified_forecast_report_v1.md"),
-            "e3b_aggregate_metrics": os.path.join(EVIDENCE_DIR, "unified_forecast_aggregate_metrics_v1.csv"),
-            "e3b_verdict": "REPRODUCTION_PASS_WITH_BASELINE_DOMINANCE",
+            "unified_forecast_report": os.path.join(EVIDENCE_DIR, "unified_forecast_report_v1.md"),
+            "unified_forecast_aggregate_metrics": os.path.join(EVIDENCE_DIR, "unified_forecast_aggregate_metrics_v1.csv"),
+            "unified_forecast_verdict": "REPRODUCTION_PASS_WITH_BASELINE_DOMINANCE",
         },
         "evaluation": {
             "status": "research_only_gate_failed" if not passed else "deployment_gate_passed",
@@ -102,7 +102,7 @@ def main() -> int:
             },
             "deployment_gate_passed": passed,
             "interpretation": interpretation,
-            "scope_note": " LSTM168 为冻结协议下公平训练的 1xLSTM(32)；注册表 KG/GNN 增强权重未按 统一预测协议重训，不在复检范围。",
+            "scope_note": "统一协议的 LSTM168 为冻结协议下公平训练的 1xLSTM(32)；注册表 KG/GNN 增强权重未按统一预测协议重训，不在复检范围。",
         },
     }
     out_path = os.path.join(OUT_DIR, "lstm_deployment_gate_recheck_v1.json")
